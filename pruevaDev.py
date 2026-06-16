@@ -54,3 +54,25 @@ print(cartera_clientes)
 
 print("***** Total *****")
 print(cartera_clientes.sum())
+
+#opcional 
+
+facturas_pendientes['vencimiento']= pd.to_datetime(facturas_pendientes['vencimiento'])
+
+fecha_referencia = pd.Timestamp('2026-06-16')
+facturas_pendientes['dias'] = (fecha_referencia - facturas_pendientes['vencimiento']).dt.days
+
+def clasificar_vencimiento(dias):
+    if dias < 0:
+        return 'por vencer'
+    elif dias <= 30:
+        return '0-30 dias'
+    elif dias <= 60:
+        return '31-60 dias'
+    else:
+        return 'mas de 90 dias'
+    
+facturas_pendientes['categoria'] = facturas_pendientes['dias'].apply(clasificar_vencimiento)
+cartera_vencimiento = facturas_pendientes.groupby('categoria')['saldo'].sum()
+print("*****Cartera por vencimiento*****")
+print(cartera_vencimiento)
